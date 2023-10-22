@@ -53,7 +53,7 @@ public class TextureGlyphProvider implements GlyphProvider {
         private final int ascent;
 
         public Factory(ResourceLocation textureLocation, int height, int ascent, List<String> chars) {
-            this.file = new ResourceLocation(textureLocation.getNamespace(), "textures/" + textureLocation.getPath());
+            this.file = new ResourceLocation(textureLocation.getResourceDomain(), "textures/" + textureLocation.getResourcePath());
             this.chars = chars;
             this.height = height;
             this.ascent = ascent;
@@ -88,7 +88,8 @@ public class TextureGlyphProvider implements GlyphProvider {
 
         @Override
         public @Nullable GlyphProvider create(IResourceManager resourceManager) {
-            try (IResource resource = resourceManager.getResource(this.file)) {
+            try {
+                IResource resource = resourceManager.getResource(this.file);
                 BufferedImage bufferedImage = TextureUtil.readBufferedImage(resource.getInputStream());
                 int width = bufferedImage.getWidth();
                 int height = bufferedImage.getHeight();

@@ -2,23 +2,16 @@ package com.github.yukkuritaku.legacyfontprovider.mixin;
 
 import com.github.yukkuritaku.legacyfontprovider.LegacyFontProviderMod;
 import com.github.yukkuritaku.legacyfontprovider.ext.GlyphFontExt;
-import com.github.yukkuritaku.legacyfontprovider.font.FontManager;
 import com.github.yukkuritaku.legacyfontprovider.font.GlyphFont;
 import com.github.yukkuritaku.legacyfontprovider.font.glyphs.BakedGlyph;
 import com.github.yukkuritaku.legacyfontprovider.font.glyphs.DefaultGlyph;
 import com.github.yukkuritaku.legacyfontprovider.font.glyphs.Glyph;
-import com.github.yukkuritaku.legacyfontprovider.font.glyphs.providers.GlyphProvider;
-import com.github.yukkuritaku.legacyfontprovider.util.TextFormattingUtil;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,8 +21,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.List;
 
 @Mixin(FontRenderer.class)
 public abstract class FontRendererMixin implements GlyphFontExt, AutoCloseable {
@@ -65,10 +56,8 @@ public abstract class FontRendererMixin implements GlyphFontExt, AutoCloseable {
     protected abstract float renderUnicodeChar(char ch, boolean italic);
 
     @Shadow
-    @Final
     protected int[] charWidth;
     @Shadow
-    @Final
     protected byte[] glyphWidth;
 
 
@@ -81,12 +70,12 @@ public abstract class FontRendererMixin implements GlyphFontExt, AutoCloseable {
                 if (!fontGlyph.equals(DefaultGlyph.INSTANCE)) {
                     GlStateManager.enableBlend();
                     Tessellator tessellator = Tessellator.getInstance();
-                    BufferBuilder builder = tessellator.getBuffer();
+                    WorldRenderer builder = tessellator.getWorldRenderer();
                     this.renderEngine.bindTexture(glyph.getTextureLocation());
                     //builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-                    GlStateManager.glBegin(7);
+                    GL11.glBegin(7);
                     glyph.render(this.renderEngine, italic, this.posX, this.posY, builder, this.red, this.blue, this.green, this.alpha);
-                    GlStateManager.glEnd();
+                    GL11.glEnd();
                     //tessellator.draw();
                     GlStateManager.disableBlend();
                     cir.setReturnValue(fontGlyph.getAdvance());
@@ -117,7 +106,7 @@ public abstract class FontRendererMixin implements GlyphFontExt, AutoCloseable {
         if (legacyfontprovider$glyphFont != null) {
             Glyph fontGlyph = legacyfontprovider$glyphFont.findGlyph(character);
             if (!fontGlyph.equals(DefaultGlyph.INSTANCE)) {
-                cir.setReturnValue(character == 167 ? 0 : MathHelper.ceil(legacyfontprovider$glyphFont.findGlyph(character).getAdvance(false)));
+                cir.setReturnValue(character == 167 ? 0 : MathHelper.ceiling_float_int(legacyfontprovider$glyphFont.findGlyph(character).getAdvance(false)));
             }
         }else {
             if (character == 160) {

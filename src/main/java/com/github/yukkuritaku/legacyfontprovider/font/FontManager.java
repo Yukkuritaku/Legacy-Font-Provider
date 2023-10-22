@@ -5,36 +5,31 @@ import com.github.yukkuritaku.legacyfontprovider.font.glyphs.providers.DefaultGl
 import com.github.yukkuritaku.legacyfontprovider.font.glyphs.providers.GlyphProvider;
 import com.github.yukkuritaku.legacyfontprovider.font.glyphs.providers.GlyphProviderType;
 import com.github.yukkuritaku.legacyfontprovider.resources.ResourcePackType;
-import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.resources.*;
+import net.minecraft.client.resources.IResource;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 @SideOnly(Side.CLIENT)
 public class FontManager implements IResourceManagerReloadListener{
@@ -73,7 +68,7 @@ public class FontManager implements IResourceManagerReloadListener{
             ResourceLocation idLocation = new ResourceLocation("default");
             List<GlyphProvider> glyphProviders = map.computeIfAbsent(idLocation,
                     loc -> Lists.newArrayList(new DefaultGlyphProvider()));
-            JsonObject deserialize = JsonUtils.gsonDeserialize(gson, IOUtils.toString(defaultJson, StandardCharsets.UTF_8), JsonObject.class);
+            JsonObject deserialize = gsonDeserialize(gson, IOUtils.toString(defaultJson, StandardCharsets.UTF_8), JsonObject.class);
             if (deserialize != null) {
                 JsonArray jsonArray = JsonUtils.getJsonArray(deserialize, "providers");
                 for (int i = jsonArray.size() - 1; i >= 0; --i) {
@@ -96,7 +91,7 @@ public class FontManager implements IResourceManagerReloadListener{
             ResourceLocation alt = new ResourceLocation("alt");
             List<GlyphProvider> providers = map.computeIfAbsent(alt,
                     loc -> Lists.newArrayList(new DefaultGlyphProvider()));
-            JsonObject obj = JsonUtils.gsonDeserialize(gson, IOUtils.toString(altJson, StandardCharsets.UTF_8), JsonObject.class);
+            JsonObject obj = gsonDeserialize(gson, IOUtils.toString(altJson, StandardCharsets.UTF_8), JsonObject.class);
             if (obj != null) {
                 JsonArray jsonArray = JsonUtils.getJsonArray(obj, "providers");
                 for (int i = jsonArray.size() - 1; i >= 0; --i) {
@@ -124,13 +119,13 @@ public class FontManager implements IResourceManagerReloadListener{
         if (resourceManager instanceof IReloadableResourceManagerExt) {
             for (ResourceLocation location : ((IReloadableResourceManagerExt) resourceManager)
                     .legacyfontprovider$getAllResourceLocations(ResourcePackType.CLIENT_RESOURCES, "font", filter -> filter.endsWith(".json"))){
-                String path = location.getPath();
-                ResourceLocation fontId = new ResourceLocation(location.getNamespace(), path.substring("font/".length(), path.length() - ".json".length()));
+                String path = location.getResourcePath();
+                ResourceLocation fontId = new ResourceLocation(location.getResourceDomain(), path.substring("font/".length(), path.length() - ".json".length()));
                 List<GlyphProvider> providers = map.computeIfAbsent(fontId, r -> Lists.newArrayList(new DefaultGlyphProvider()));
                 try {
                     for (IResource resource : resourceManager.getAllResources(location)){
                         try(InputStream stream = resource.getInputStream()) {
-                            JsonArray jsonarray = JsonUtils.getJsonArray(JsonUtils.gsonDeserialize(gson, IOUtils.toString(stream, StandardCharsets.UTF_8), JsonObject.class), "providers");
+                            JsonArray jsonarray = JsonUtils.getJsonArray(gsonDeserialize(gson, IOUtils.toString(stream, StandardCharsets.UTF_8), JsonObject.class), "providers");
                             for(int i = jsonarray.size() - 1; i >= 0; --i) {
                                 JsonObject jsonobject = JsonUtils.getJsonObject(jsonarray.get(i), "providers[" + i + "]");
                                 try {
@@ -160,10 +155,28 @@ public class FontManager implements IResourceManagerReloadListener{
         Stream.concat(this.fonts.keySet().stream(), map.keySet().stream()).distinct().forEach(location -> {
             List<GlyphProvider> glyphProviders = map.getOrDefault(location, Collections.emptyList());
             Collections.reverse(glyphProviders);
-            ResourceLocation id = new ResourceLocation(location.getNamespace(), location.getPath().replace(".json", ""));
+            ResourceLocation id = new ResourceLocation(location.getResourceDomain(), location.getResourcePath().replace(".json", ""));
             this.fonts.computeIfAbsent(location, fontLocation -> new GlyphFont(this.textureManager, id)).setGlyphProviders(glyphProviders);
         });
         ProgressManager.pop(bar);
+    }
+
+    public static <T> T gsonDeserialize(Gson gsonIn, String json, Class<T> adapter) {
+        return gsonDeserialize(gsonIn, json, adapter, false);
+    }
+
+    public static <T> T gsonDeserialize(Gson gsonIn, String json, Class<T> adapter, boolean lenient) {
+        return gsonDeserialize(gsonIn, new StringReader(json), adapter, lenient);
+    }
+
+    public static <T> T gsonDeserialize(Gson gsonIn, Reader readerIn, Class<T> adapter, boolean lenient) {
+        try {
+            JsonReader jsonReader = new JsonReader(readerIn);
+            jsonReader.setLenient(lenient);
+            return gsonIn.getAdapter(adapter).read(jsonReader);
+        } catch (IOException var5) {
+            throw new JsonParseException(var5);
+        }
     }
 
     @Nullable

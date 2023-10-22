@@ -5,12 +5,12 @@
     "description": "Brings 1.13+ Font Provider to old version of minecraft!",
     "version": "${version}",
     "mcversion": "${mcversion}",
-    "url": "https://github.com/Yukkuritaku/Legacy-Font-Provider/tree/1.12.2",
+    "url": "https://github.com/romangraef/Forge1.8.9Template/",
     "updateUrl": "",
     "authorList": [
-      "Yukkuritaku"
+      "You"
     ],
-    "credits": "rete2 for idea",
+    "credits": "",
     "logoFile": "",
     "screenshots": [],
     "dependencies": []

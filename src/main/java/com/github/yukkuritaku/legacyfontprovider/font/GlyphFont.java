@@ -11,8 +11,8 @@ import it.unimi.dsi.fastutil.chars.CharList;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -57,7 +57,7 @@ public class GlyphFont implements AutoCloseable {
                 if (glyph != null){
                     set.add(glyphProvider);
                     if (glyph != DefaultGlyph.INSTANCE){
-                        this.glyphsByWidth.computeIfAbsent(MathHelper.ceil(glyph.getAdvance(false)),
+                        this.glyphsByWidth.computeIfAbsent(MathHelper.ceiling_float_int(glyph.getAdvance(false)),
                                 width -> new CharArrayList()).add(c);
                     }
                     break;
@@ -97,7 +97,7 @@ public class GlyphFont implements AutoCloseable {
                 return bakedGlyph;
             }
         }
-        FontTexture fontTexture = new FontTexture(new ResourceLocation(this.id.getNamespace(), this.id.getPath() + "/" + this.fontTextures.size()), glyphInfo.isColored());
+        FontTexture fontTexture = new FontTexture(new ResourceLocation(this.id.getResourceDomain(), this.id.getResourcePath() + "/" + this.fontTextures.size()), glyphInfo.isColored());
         this.fontTextures.add(fontTexture);
         this.textureManager.loadTexture(fontTexture.getTextureLocation(), fontTexture);
         BakedGlyph bakedGlyph = fontTexture.createBakedGlyph(glyphInfo);
@@ -105,7 +105,7 @@ public class GlyphFont implements AutoCloseable {
     }
 
     public BakedGlyph obfuscate(Glyph glyph) {
-        CharList charList = this.glyphsByWidth.get(MathHelper.ceil(glyph.getAdvance(false)));
+        CharList charList = this.glyphsByWidth.get(MathHelper.ceiling_float_int(glyph.getAdvance(false)));
         return charList != null && !charList.isEmpty() ? this.getGlyph(charList.get(RANDOM.nextInt(charList.size()))) : this.fallbackGlyph;
     }
 

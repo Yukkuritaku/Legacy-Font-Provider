@@ -1,7 +1,6 @@
 package com.github.yukkuritaku.legacyfontprovider.font.glyphs;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -33,7 +32,7 @@ public class BakedGlyph {
         this.down = down;
     }
 
-    public void render(TextureManager textureManager, boolean italic, float x, float y, BufferBuilder builder, float red, float green, float blue, float alpha) {
+    public void render(TextureManager textureManager, boolean italic, float x, float y, WorldRenderer builder, float red, float green, float blue, float alpha) {
         float left = x + this.left;
         float right = x + this.right;
         float upOffset = this.up - 3.0f;

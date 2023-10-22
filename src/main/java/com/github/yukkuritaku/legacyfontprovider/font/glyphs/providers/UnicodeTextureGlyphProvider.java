@@ -37,7 +37,8 @@ public class UnicodeTextureGlyphProvider implements GlyphProvider {
         for (int i = 0; i < 256; i++) {
             char c = (char) (i * 256);
             ResourceLocation resourceLocation = this.getTexture(c);
-            try(IResource resource = this.resourceManager.getResource(resourceLocation)) {
+            try {
+                IResource resource = this.resourceManager.getResource(resourceLocation);
                 BufferedImage bufferedImage = TextureUtil.readBufferedImage(resource.getInputStream());
                 if (bufferedImage.getWidth() == 256 && bufferedImage.getHeight() == 256){
                     int a = 0;
@@ -89,7 +90,8 @@ public class UnicodeTextureGlyphProvider implements GlyphProvider {
     }
 
     private BufferedImage loadTexture(ResourceLocation location){
-        try(IResource resource = this.resourceManager.getResource(location)) {
+        try {
+            IResource resource = this.resourceManager.getResource(location);
             return TextureUtil.readBufferedImage(resource.getInputStream());
         } catch (IOException e) {
             LOGGER.error("Couldn't load texture {}", location, e);
@@ -99,7 +101,7 @@ public class UnicodeTextureGlyphProvider implements GlyphProvider {
 
     private ResourceLocation getTexture(char c) {
         ResourceLocation resourceLocation = new ResourceLocation(String.format(this.template, String.format("%02x", c / 256)));
-        return new ResourceLocation(resourceLocation.getNamespace(), "textures/" + resourceLocation.getPath());
+        return new ResourceLocation(resourceLocation.getResourceDomain(), "textures/" + resourceLocation.getResourcePath());
     }
 
     @SideOnly(Side.CLIENT)
@@ -117,7 +119,8 @@ public class UnicodeTextureGlyphProvider implements GlyphProvider {
 
         @Override
         public @Nullable GlyphProvider create(IResourceManager resourceManager) {
-            try(IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(this.sizes)) {
+            try {
+                IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(this.sizes);
                 byte[] size = new byte[65536];
                 resource.getInputStream().read(size);
                 return new UnicodeTextureGlyphProvider(resourceManager, size, this.template);

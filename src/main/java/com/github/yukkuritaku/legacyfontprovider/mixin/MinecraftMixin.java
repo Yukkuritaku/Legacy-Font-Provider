@@ -17,27 +17,27 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MinecraftMixin {
 
     @Shadow
-    private IReloadableResourceManager resourceManager;
+    private IReloadableResourceManager mcResourceManager;
 
     @Shadow
-    public FontRenderer fontRenderer;
+    public FontRenderer fontRendererObj;
 
     @Shadow public TextureManager renderEngine;
 
     @Shadow public FontRenderer standardGalacticFontRenderer;
 
-    @Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/audio/MusicTicker;<init>(Lnet/minecraft/client/Minecraft;)V"))
+    @Inject(method = "startGame", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/audio/MusicTicker;<init>(Lnet/minecraft/client/Minecraft;)V"))
     private void onInit$MusicTicker(CallbackInfo ci) {
         LegacyFontProviderMod.getInstance().setFontManager(new FontManager(this.renderEngine, Minecraft.getMinecraft().gameSettings.forceUnicodeFont));
-        this.resourceManager.registerReloadListener(LegacyFontProviderMod.getInstance().getFontManager());
+        this.mcResourceManager.registerReloadListener(LegacyFontProviderMod.getInstance().getFontManager());
     }
 
-    @Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;setUnicodeFlag(Z)V"))
+    @Inject(method = "startGame", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;setUnicodeFlag(Z)V"))
     private void onInit$setUnicodeFlag(CallbackInfo ci) {
-        ((GlyphFontExt) this.fontRenderer).legacyfontprovider$setGlyphFont(LegacyFontProviderMod.getInstance().getFontManager().getGlyphFont(FontManager.DEFAULT_FONT_RENDERER_NAME));
+        ((GlyphFontExt) this.fontRendererObj).legacyfontprovider$setGlyphFont(LegacyFontProviderMod.getInstance().getFontManager().getGlyphFont(FontManager.DEFAULT_FONT_RENDERER_NAME));
     }
 
-    @Inject(method = "init",
+    @Inject(method = "startGame",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/resources/IReloadableResourceManager;registerReloadListener(Lnet/minecraft/client/resources/IResourceManagerReloadListener;)V",
                     ordinal = 3))

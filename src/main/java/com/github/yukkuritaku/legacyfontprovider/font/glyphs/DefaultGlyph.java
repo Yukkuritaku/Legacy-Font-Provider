@@ -2,7 +2,6 @@ package com.github.yukkuritaku.legacyfontprovider.font.glyphs;
 
 import com.github.yukkuritaku.legacyfontprovider.mixin.TextureUtilAccessor;
 import com.github.yukkuritaku.legacyfontprovider.util.Util;
-import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 

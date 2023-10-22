@@ -1,13 +1,14 @@
 package com.github.yukkuritaku.legacyfontprovider.util;
 
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.EnumChatFormatting;
+
 import javax.annotation.Nullable;
 import java.util.Locale;
 
 public class TextFormattingUtil {
 
 
-    private static boolean isColor(TextFormatting formatting){
+    private static boolean isColor(EnumChatFormatting formatting){
         boolean color = false;
         switch (formatting){
             case BLACK:
@@ -40,7 +41,7 @@ public class TextFormattingUtil {
     }
 
     @Nullable
-    public static Integer getColor(TextFormatting formatting){
+    public static Integer getColor(EnumChatFormatting formatting){
         Integer color = 0;
         switch (formatting){
             case BLACK:
@@ -103,11 +104,11 @@ public class TextFormattingUtil {
     }
 
     @Nullable
-    public static TextFormatting fromFormattingCode(char formattingCodeIn) {
+    public static EnumChatFormatting fromFormattingCode(char formattingCodeIn) {
         char c0 = Character.toString(formattingCodeIn).toLowerCase(Locale.ROOT).charAt(0);
-        for(TextFormatting textformatting : TextFormatting.values()) {
-            if (textformatting.formattingCode == c0) {
-                return textformatting;
+        for(EnumChatFormatting chatFormatting : EnumChatFormatting.values()) {
+            if (chatFormatting.formattingCode == c0) {
+                return chatFormatting;
             }
         }
         return null;
@@ -119,12 +120,12 @@ public class TextFormattingUtil {
         int length = str.length();
         while((i = str.indexOf(167, i + 1)) != -1) {
             if (i < length - 1) {
-                TextFormatting textformatting = fromFormattingCode(str.charAt(i + 1));
+                EnumChatFormatting textformatting = fromFormattingCode(str.charAt(i + 1));
                 if (textformatting != null) {
                     if (!textformatting.isFancyStyling()) {
                         stringbuilder.setLength(0);
                     }
-                    if (textformatting != TextFormatting.RESET) {
+                    if (textformatting != EnumChatFormatting.RESET) {
                         stringbuilder.append(textformatting);
                     }
                 }

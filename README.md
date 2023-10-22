@@ -14,5 +14,7 @@ Minecraft 1.13+にあるFont Providerを1.12.2以下で使えるようにするM
 1.7.10版では[SpongeMixins](https://modrinth.com/mod/spongemixin1710)が必要です。
 
 ### 現在確認してる問題
-
 Optifine環境だと上手くトリミング(改行)出来ない
+
+## Special Thanks
+

@@ -23,4 +23,4 @@ plugins {
 }
 
 
-rootProject.name = "legacy-font-provider-1.12.2"
+rootProject.name = "legacy-font-provider-1.8.9"

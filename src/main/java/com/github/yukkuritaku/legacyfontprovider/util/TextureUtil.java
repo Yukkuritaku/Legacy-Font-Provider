@@ -1,6 +1,9 @@
 package com.github.yukkuritaku.legacyfontprovider.util;
 
 import net.minecraft.client.renderer.GlStateManager;
+import org.lwjgl.opengl.GL11;
+
+import java.nio.ByteBuffer;
 
 public class TextureUtil {
 
@@ -15,14 +18,14 @@ public class TextureUtil {
             GlStateManager.bindTexture(glTextureId);
         }
         if (mipmapLevels >= 0) {
-            GlStateManager.glTexParameteri(3553, 33085, mipmapLevels);
-            GlStateManager.glTexParameteri(3553, 33082, 0);
-            GlStateManager.glTexParameteri(3553, 33083, mipmapLevels);
-            GlStateManager.glTexParameterf(3553, 34049, 0.0f);
+            GL11.glTexParameteri(3553, 33085, mipmapLevels);
+            GL11.glTexParameteri(3553, 33082, 0);
+            GL11.glTexParameteri(3553, 33083, mipmapLevels);
+            GL11.glTexParameterf(3553, 34049, 0.0f);
         }
 
         for(int i = 0; i <= mipmapLevels; ++i) {
-            GlStateManager.glTexImage2D(3553, i, internalFormat.getGlFormat(), width >> i, height >> i, 0, 6408, 5121, null);
+            GL11.glTexImage2D(3553, i, internalFormat.getGlFormat(), width >> i, height >> i, 0, 6408, 5121, (ByteBuffer) null);
         }
 
     }
