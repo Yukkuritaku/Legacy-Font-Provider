@@ -4,21 +4,15 @@ if [[ -d "run/crash-reports" ]]; then
   exit 1
 fi
 
-if grep --quiet "Fatal errors were detected" server.log; then
+if grep --quiet "Fatal errors were detected" client.log; then
   echo "Fatal errors detected:"
-  cat server.log
+  cat client.log
   exit 1
 fi
 
-if grep --quiet "The state engine was in incorrect state ERRORED and forced into state SERVER_STOPPED" server.log; then
-  echo "Server force stopped:"
-  cat server.log
-  exit 1
-fi
-
-if grep --quiet 'Done .+ For help, type "help" or "?"' server.log; then
-  echo "Server didn't finish startup:"
-  cat server.log
+if grep --quiet "---- Minecraft Crash Report ----" client.log; then
+  echo "Client force stopped:"
+  cat client.log
   exit 1
 fi
 
