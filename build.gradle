@@ -153,7 +153,7 @@ configurations.all {
 'git config core.fileMode false'.execute()
 // Pulls version from git tag
 try {
-    version = minecraftVersion + "-" + gitVersion()
+    version = minecraftVersion + "-" + "${modVersion}"
 }
 catch (Exception e) {
     throw new IllegalStateException("This mod must be version controlled by Git AND the repository must provide at least one tag!");
@@ -180,7 +180,7 @@ minecraft {
             replace gradleTokenModName, modName
         }
         if(gradleTokenVersion) {
-            replace gradleTokenVersion, versionDetails().lastTag
+            replace gradleTokenVersion, modVersion
         }
         if(gradleTokenGroupName) {
             replace gradleTokenGroupName, modGroup
@@ -369,7 +369,7 @@ processResources
 
         // replace version and mcversion
         expand "minecraftVersion": project.minecraft.version,
-                "modVersion": versionDetails().lastTag,
+                "modVersion": modVersion,
                 "modId": modId,
                 "modName": modName
     }
