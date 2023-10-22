@@ -1,4 +1,4 @@
-//version: 1656003793
+//version: 1673419088
 /*
 DO NOT CHANGE THIS FILE!
 
@@ -405,6 +405,7 @@ def getManifestAttributes() {
                 "ForceLoadAsMod" : containsMixinsAndOrCoreModOnly.toBoolean() == false
         ]
     }
+    manifestAttributes += ["ModSide": "CLIENT"]
     return manifestAttributes
 }
 
@@ -526,6 +527,10 @@ task updateBuildScript {
 
         print("Build script already up-to-date!")
     }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
 }
 
 if (isNewBuildScriptVersionAvailable(projectDir.toString())) {
