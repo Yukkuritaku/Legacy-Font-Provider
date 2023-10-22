@@ -21,7 +21,6 @@ public class FontTexture extends AbstractTexture implements AutoCloseable {
 
     public FontTexture(ResourceLocation textureLocation, boolean colored) {
         this.textureLocation = textureLocation;
-        LogManager.getLogger().info("FontTexture: {}", textureLocation.toString());
         this.colored = colored;
         this.entry = new Entry(0, 0, 256, 256);
         TextureUtil.allocateTexture(colored ? TextureUtil.PixelFormatGLCode.RGBA : TextureUtil.PixelFormatGLCode.INTENSITY,

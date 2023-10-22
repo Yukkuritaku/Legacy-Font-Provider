@@ -99,7 +99,6 @@ tasks.withType(Jar::class) {
     manifest.attributes(mapOf(
         "FMLCorePluginContainsFMLMod" to "true",
         "ForceLoadAsMod" to "true",
-        "FMLCorePlugin" to "$baseGroup.tweaker.LegacyFontProviderLoadingPlugin",
         "ModSide" to "CLIENT",
         "TweakClass" to "org.spongepowered.asm.launch.MixinTweaker",
         "MixinConfigs" to "mixins.$modid.json",
