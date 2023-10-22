@@ -153,7 +153,6 @@ public class FontManager implements IResourceManagerReloadListener{
         Stream.concat(this.fonts.keySet().stream(), map.keySet().stream()).distinct().forEach(location -> {
             List<GlyphProvider> glyphProviders = map.getOrDefault(location, Collections.emptyList());
             Collections.reverse(glyphProviders);
-            LOGGER.info(location.toString());
             ResourceLocation id = new ResourceLocation(location.getResourceDomain(), location.getResourcePath().replace(".json", ""));
             this.fonts.computeIfAbsent(location, fontLocation -> new GlyphFont(this.textureManager, id)).setGlyphProviders(glyphProviders);
         });
@@ -184,7 +183,6 @@ public class FontManager implements IResourceManagerReloadListener{
 
     public GlyphFont getGlyphFont(ResourceLocation id) {
         return this.fonts.computeIfAbsent(id, location -> {
-            LOGGER.info("getGlyphFont id not found: {}", location.toString());
             GlyphFont glyphFont = new GlyphFont(this.textureManager, location);//new FontRenderer(this.textureManager, new GlyphFont(this.textureManager, location));
             glyphFont.setGlyphProviders(Lists.newArrayList(new DefaultGlyphProvider()));
             return glyphFont;

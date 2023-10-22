@@ -25,7 +25,7 @@ public class SimpleReloadableResourceManagerMixin implements IReloadableResource
             locations.addAll(((IReloadableResourceManagerExt)resourceManager).legacyfontprovider$getAllResourceLocations(type, path, filter));
         }
         List resourceLocations = Lists.newArrayList(locations);
-        Collections.sort(resourceLocations);
+        resourceLocations.sort((Comparator.comparing(ResourceLocation::getResourceDomain).thenComparing(ResourceLocation::getResourcePath)));
         return resourceLocations;
     }
 }
