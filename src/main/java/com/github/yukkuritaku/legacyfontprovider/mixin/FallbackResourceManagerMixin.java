@@ -1,4 +1,4 @@
-package com.github.yukkuritaku.legacyfontprovider.mixin.minecraft;
+package com.github.yukkuritaku.legacyfontprovider.mixin;
 
 import com.github.yukkuritaku.legacyfontprovider.ext.IReloadableResourceManagerExt;
 import com.github.yukkuritaku.legacyfontprovider.ext.IResourcePackExt;
@@ -19,12 +19,12 @@ import java.util.function.Predicate;
 @Mixin(FallbackResourceManager.class)
 public class FallbackResourceManagerMixin implements IReloadableResourceManagerExt {
 
-    @Shadow @Final protected List resourcePacks;
+    @Shadow @Final protected List<IResourcePack> resourcePacks;
 
     @Override
     public Collection<ResourceLocation> legacyfontprovider$getAllResourceLocations(ResourcePackType type, String path, Predicate<String> filter) {
-        List list = Lists.newArrayList();
-        for (Object resourcePack : this.resourcePacks){
+        List<ResourceLocation> list = Lists.newArrayList();
+        for (IResourcePack resourcePack : this.resourcePacks){
             if (resourcePack instanceof IResourcePackExt){
                 list.addAll(((IResourcePackExt)resourcePack).legacyfontprovider$getAllResourceLocations(type, path, Integer.MAX_VALUE, filter));
             }

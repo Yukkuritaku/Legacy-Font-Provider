@@ -2,13 +2,17 @@ package com.github.yukkuritaku.legacyfontprovider.font;
 
 import com.github.yukkuritaku.legacyfontprovider.font.glyphs.BakedGlyph;
 import com.github.yukkuritaku.legacyfontprovider.font.glyphs.GlyphInfo;
-import com.github.yukkuritaku.legacyfontprovider.util.TextureUtils;
+import com.github.yukkuritaku.legacyfontprovider.util.TextureUtil;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
-import org.lwjgl.opengl.GL11;
+import org.jetbrains.annotations.Nullable;
 
+@SideOnly(Side.CLIENT)
 public class FontTexture extends AbstractTexture implements AutoCloseable {
 
     private final ResourceLocation textureLocation;
@@ -20,7 +24,7 @@ public class FontTexture extends AbstractTexture implements AutoCloseable {
         LogManager.getLogger().info("FontTexture: {}", textureLocation.toString());
         this.colored = colored;
         this.entry = new Entry(0, 0, 256, 256);
-        TextureUtils.allocateTexture(colored ? TextureUtils.PixelFormatGLCode.RGBA : TextureUtils.PixelFormatGLCode.INTENSITY,
+        TextureUtil.allocateTexture(colored ? TextureUtil.PixelFormatGLCode.RGBA : TextureUtil.PixelFormatGLCode.INTENSITY,
                 this.getGlTextureId(),
                 256, 256);
         //TextureUtils.allocateTexture(this.colored ? TextureUtils.PixelFormat.RGBA : TextureUtils.PixelFormat.INTENSITY, this.getGlTextureId(), 256, 256);
@@ -45,8 +49,7 @@ public class FontTexture extends AbstractTexture implements AutoCloseable {
         } else {
             Entry entry = this.entry.add(glyphInfo);
             if (entry != null) {
-
-                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.getGlTextureId());
+                GlStateManager.bindTexture(this.getGlTextureId());
                 glyphInfo.uploadGlyph(entry.xOffset, entry.yOffset);
                 return new BakedGlyph(this.textureLocation,
                         (entry.xOffset + 0.01f) / 256.0f,
@@ -80,6 +83,7 @@ public class FontTexture extends AbstractTexture implements AutoCloseable {
             this.height = height;
         }
 
+        @Nullable
         Entry add(GlyphInfo glyphInfo) {
             if (this.left != null && this.right != null) {
                 Entry entry = this.left.add(glyphInfo);

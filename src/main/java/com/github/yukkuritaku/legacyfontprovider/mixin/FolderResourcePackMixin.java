@@ -1,4 +1,4 @@
-package com.github.yukkuritaku.legacyfontprovider.mixin.minecraft;
+package com.github.yukkuritaku.legacyfontprovider.mixin;
 
 import com.github.yukkuritaku.legacyfontprovider.ext.IResourcePackExt;
 import com.github.yukkuritaku.legacyfontprovider.resources.ResourcePackType;

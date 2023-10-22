@@ -1,4 +1,4 @@
-package com.github.yukkuritaku.legacyfontprovider.mixin.minecraft;
+package com.github.yukkuritaku.legacyfontprovider.mixin;
 
 import com.github.yukkuritaku.legacyfontprovider.ext.IResourcePackExt;
 import com.github.yukkuritaku.legacyfontprovider.resources.ResourcePackType;
@@ -20,7 +20,7 @@ import java.util.zip.ZipFile;
 @Mixin(FileResourcePack.class)
 public abstract class FileResourcePackMixin implements IResourcePackExt {
     @Shadow
-    protected abstract ZipFile getResourcePackZipFile() throws IOException;
+    public abstract ZipFile getResourcePackZipFile() throws IOException;
 
     @Override
     public Collection<ResourceLocation> legacyfontprovider$getAllResourceLocations(ResourcePackType type, String path, int maxDepth, Predicate<String> filter) {

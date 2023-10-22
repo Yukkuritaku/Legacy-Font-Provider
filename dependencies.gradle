@@ -1,5 +1,0 @@
-// Add your dependencies here
-
-dependencies {
-    shadowCompile 'it.unimi.dsi:fastutil:8.5.12'
-}

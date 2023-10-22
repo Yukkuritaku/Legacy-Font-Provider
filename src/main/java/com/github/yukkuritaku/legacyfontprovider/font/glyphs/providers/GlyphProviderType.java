@@ -3,10 +3,13 @@ package com.github.yukkuritaku.legacyfontprovider.font.glyphs.providers;
 import com.github.yukkuritaku.legacyfontprovider.util.Util;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Map;
 import java.util.function.Function;
 
+@SideOnly(Side.CLIENT)
 public enum GlyphProviderType {
     BITMAP("bitmap", TextureGlyphProvider.Factory::deserialize),
     //LEGACY_UNICODE("legacy_unicode", UnicodeTextureGlyphProvider.Factory::deserialize)

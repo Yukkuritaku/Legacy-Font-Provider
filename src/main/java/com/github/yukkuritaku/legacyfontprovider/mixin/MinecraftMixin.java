@@ -1,4 +1,4 @@
-package com.github.yukkuritaku.legacyfontprovider.mixin.minecraft;
+package com.github.yukkuritaku.legacyfontprovider.mixin;
 
 import com.github.yukkuritaku.legacyfontprovider.LegacyFontProviderMod;
 import com.github.yukkuritaku.legacyfontprovider.ext.GlyphFontExt;
@@ -17,26 +17,27 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MinecraftMixin {
 
     @Shadow
-    private IReloadableResourceManager mcResourceManager;
+    private IReloadableResourceManager resourceManager;
 
-    @Shadow public FontRenderer fontRenderer;
+    @Shadow
+    public FontRenderer fontRenderer;
 
     @Shadow public TextureManager renderEngine;
 
     @Shadow public FontRenderer standardGalacticFontRenderer;
 
-    @Inject(method = "startGame", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/audio/MusicTicker;<init>(Lnet/minecraft/client/Minecraft;)V"))
+    @Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/audio/MusicTicker;<init>(Lnet/minecraft/client/Minecraft;)V"))
     private void onInit$MusicTicker(CallbackInfo ci) {
         LegacyFontProviderMod.getInstance().setFontManager(new FontManager(this.renderEngine, Minecraft.getMinecraft().gameSettings.forceUnicodeFont));
-        this.mcResourceManager.registerReloadListener(LegacyFontProviderMod.getInstance().getFontManager());
+        this.resourceManager.registerReloadListener(LegacyFontProviderMod.getInstance().getFontManager());
     }
 
-    @Inject(method = "startGame", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;setUnicodeFlag(Z)V"))
+    @Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;setUnicodeFlag(Z)V"))
     private void onInit$setUnicodeFlag(CallbackInfo ci) {
         ((GlyphFontExt) this.fontRenderer).legacyfontprovider$setGlyphFont(LegacyFontProviderMod.getInstance().getFontManager().getGlyphFont(FontManager.DEFAULT_FONT_RENDERER_NAME));
     }
 
-    @Inject(method = "startGame",
+    @Inject(method = "init",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/resources/IReloadableResourceManager;registerReloadListener(Lnet/minecraft/client/resources/IResourceManagerReloadListener;)V",
                     ordinal = 3))

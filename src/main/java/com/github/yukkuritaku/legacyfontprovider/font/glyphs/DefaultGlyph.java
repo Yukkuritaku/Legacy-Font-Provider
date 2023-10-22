@@ -1,10 +1,14 @@
 package com.github.yukkuritaku.legacyfontprovider.font.glyphs;
 
+import com.github.yukkuritaku.legacyfontprovider.mixin.TextureUtilAccessor;
 import com.github.yukkuritaku.legacyfontprovider.util.Util;
 import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.awt.image.BufferedImage;
 
+@SideOnly(Side.CLIENT)
 public enum DefaultGlyph implements GlyphInfo {
     INSTANCE;
 
@@ -35,7 +39,7 @@ public enum DefaultGlyph implements GlyphInfo {
 
     @Override
     public void uploadGlyph(int xOffset, int yOffset) {
-        TextureUtil.uploadTextureImageSubImpl(DEFAULT_IMAGE, xOffset, yOffset, false, false);
+        TextureUtilAccessor.invokeUploadTextureImageSubImpl(DEFAULT_IMAGE, xOffset, yOffset, false, false);
     }
 
     @Override

@@ -1,0 +1,17 @@
+{
+  "package": "${mixinGroup}",
+  "refmap": "mixins.${modid}.refmap.json",
+  "minVersion": "0.7",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "client": [
+    "FallbackResourceManagerMixin",
+    "FileResourcePackMixin",
+    "FolderResourcePackMixin",
+    "FontRendererMixin",
+    "MinecraftMixin",
+    "SimpleReloadableResourceManagerMixin",
+    "TextureUtilAccessor"
+  ]
+}

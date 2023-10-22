@@ -1,10 +1,10 @@
 package com.github.yukkuritaku.legacyfontprovider.ext;
 
 import com.github.yukkuritaku.legacyfontprovider.font.GlyphFont;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import com.github.yukkuritaku.legacyfontprovider.font.glyphs.providers.GlyphProvider;
 
-@SideOnly(Side.CLIENT)
+import java.util.List;
+
 public interface GlyphFontExt {
     void legacyfontprovider$setGlyphFont(GlyphFont font);
 }

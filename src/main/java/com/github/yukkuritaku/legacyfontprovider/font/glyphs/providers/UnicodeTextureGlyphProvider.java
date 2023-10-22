@@ -1,23 +1,27 @@
 package com.github.yukkuritaku.legacyfontprovider.font.glyphs.providers;
 
 import com.github.yukkuritaku.legacyfontprovider.font.glyphs.GlyphInfo;
-import com.github.yukkuritaku.legacyfontprovider.util.JsonUtil;
-import com.github.yukkuritaku.legacyfontprovider.util.TextureUtils;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
+// Unused
+@SideOnly(Side.CLIENT)
 public class UnicodeTextureGlyphProvider implements GlyphProvider {
     private static final Logger LOGGER = LogManager.getLogger();
     private final IResourceManager resourceManager;
@@ -33,9 +37,8 @@ public class UnicodeTextureGlyphProvider implements GlyphProvider {
         for (int i = 0; i < 256; i++) {
             char c = (char) (i * 256);
             ResourceLocation resourceLocation = this.getTexture(c);
-            try {
-                IResource resource = this.resourceManager.getResource(resourceLocation);
-                BufferedImage bufferedImage = TextureUtils.readBufferedImage(resource.getInputStream());
+            try(IResource resource = this.resourceManager.getResource(resourceLocation)) {
+                BufferedImage bufferedImage = TextureUtil.readBufferedImage(resource.getInputStream());
                 if (bufferedImage.getWidth() == 256 && bufferedImage.getHeight() == 256){
                     int a = 0;
                     while (true){
@@ -69,7 +72,7 @@ public class UnicodeTextureGlyphProvider implements GlyphProvider {
     }
 
     @Override
-    public GlyphInfo getGlyph(char character) {
+    public @Nullable GlyphInfo getGlyph(char character) {
         byte size = sizes[character];
         if (size != 0){
             BufferedImage image = unicodeMap.computeIfAbsent(this.getTexture(character), this::loadTexture);
@@ -86,9 +89,8 @@ public class UnicodeTextureGlyphProvider implements GlyphProvider {
     }
 
     private BufferedImage loadTexture(ResourceLocation location){
-        try {
-            IResource resource = this.resourceManager.getResource(location);
-            return TextureUtils.readBufferedImage(resource.getInputStream());
+        try(IResource resource = this.resourceManager.getResource(location)) {
+            return TextureUtil.readBufferedImage(resource.getInputStream());
         } catch (IOException e) {
             LOGGER.error("Couldn't load texture {}", location, e);
         }
@@ -97,9 +99,10 @@ public class UnicodeTextureGlyphProvider implements GlyphProvider {
 
     private ResourceLocation getTexture(char c) {
         ResourceLocation resourceLocation = new ResourceLocation(String.format(this.template, String.format("%02x", c / 256)));
-        return new ResourceLocation(resourceLocation.getResourceDomain(), "textures/" + resourceLocation.getResourcePath());
+        return new ResourceLocation(resourceLocation.getNamespace(), "textures/" + resourceLocation.getPath());
     }
 
+    @SideOnly(Side.CLIENT)
     public static class Factory implements GlyphProviderFactory{
         private final ResourceLocation sizes;
         private final String template;
@@ -109,13 +112,12 @@ public class UnicodeTextureGlyphProvider implements GlyphProvider {
             this.template = template;
         }
         public static Factory deserialize(JsonObject jsonObject){
-            return new Factory(new ResourceLocation(JsonUtil.getString(jsonObject, "sizes")), JsonUtil.getString(jsonObject, "template"));
+            return new Factory(new ResourceLocation(JsonUtils.getString(jsonObject, "sizes")), JsonUtils.getString(jsonObject, "template"));
         }
 
         @Override
-        public GlyphProvider create(IResourceManager resourceManager) {
-            try {
-                IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(this.sizes);
+        public @Nullable GlyphProvider create(IResourceManager resourceManager) {
+            try(IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(this.sizes)) {
                 byte[] size = new byte[65536];
                 resource.getInputStream().read(size);
                 return new UnicodeTextureGlyphProvider(resourceManager, size, this.template);
@@ -126,6 +128,7 @@ public class UnicodeTextureGlyphProvider implements GlyphProvider {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     static final class TextureGlyphInfo implements GlyphInfo{
 
         private final int width;
@@ -159,8 +162,6 @@ public class UnicodeTextureGlyphProvider implements GlyphProvider {
 
         @Override
         public void uploadGlyph(int xOffset, int yOffset) {
-            LOGGER.info("xOffset: {}, yOffset: {}, width: {}, height: {}, unpackSkipPixels: {}, unpackSkipRows: {}",
-                    xOffset, yOffset, this.width, this.height, this.unpackSkipPixels, this.unpackSkipRows);
             //TextureUtil.uploadTextureImageSubImpl(subImage, xOffset, yOffset, false, false);
             //this.texture.uploadTextureSub(0, xOffset, yOffset, this.unpackSkipPixels, this.unpackSkipRows, this.width, this.height, false);
         }

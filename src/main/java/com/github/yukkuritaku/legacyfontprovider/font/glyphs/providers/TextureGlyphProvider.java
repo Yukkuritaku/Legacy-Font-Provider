@@ -1,8 +1,7 @@
 package com.github.yukkuritaku.legacyfontprovider.font.glyphs.providers;
 
 import com.github.yukkuritaku.legacyfontprovider.font.glyphs.GlyphInfo;
-import com.github.yukkuritaku.legacyfontprovider.util.JsonUtil;
-import com.github.yukkuritaku.legacyfontprovider.util.TextureUtils;
+import com.github.yukkuritaku.legacyfontprovider.mixin.TextureUtilAccessor;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -12,14 +11,19 @@ import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 
+@SideOnly(Side.CLIENT)
 public class TextureGlyphProvider implements GlyphProvider {
 
     private final Char2ObjectMap<TextureGlyphInfo> glyphInfos;
@@ -36,10 +40,11 @@ public class TextureGlyphProvider implements GlyphProvider {
     }
 
     @Override
-    public GlyphInfo getGlyph(char character) {
+    public @Nullable GlyphInfo getGlyph(char character) {
         return this.glyphInfos.get(character);
     }
 
+    @SideOnly(Side.CLIENT)
     public static class Factory implements GlyphProviderFactory {
 
         private final ResourceLocation file;
@@ -48,22 +53,22 @@ public class TextureGlyphProvider implements GlyphProvider {
         private final int ascent;
 
         public Factory(ResourceLocation textureLocation, int height, int ascent, List<String> chars) {
-            this.file = new ResourceLocation(textureLocation.getResourceDomain(), "textures/" + textureLocation.getResourcePath());
+            this.file = new ResourceLocation(textureLocation.getNamespace(), "textures/" + textureLocation.getPath());
             this.chars = chars;
             this.height = height;
             this.ascent = ascent;
         }
 
         public static Factory deserialize(JsonObject jsonObject) {
-            int height = JsonUtil.getInt(jsonObject, "height", 8);
-            int ascent = JsonUtil.getInt(jsonObject, "ascent");
+            int height = JsonUtils.getInt(jsonObject, "height", 8);
+            int ascent = JsonUtils.getInt(jsonObject, "ascent");
             if (ascent > height) {
                 throw new JsonParseException("Ascent " + ascent + " higher than height " + height);
             } else {
                 List<String> list = Lists.newArrayList();
-                JsonArray array = JsonUtil.getJsonArray(jsonObject, "chars");
+                JsonArray array = JsonUtils.getJsonArray(jsonObject, "chars");
                 for (int size = 0; size < array.size(); size++) {
-                    String chars = JsonUtil.getString(array.get(size), "chars[" + size + "]");
+                    String chars = JsonUtils.getString(array.get(size), "chars[" + size + "]");
                     if (size > 0) {
                         int length = chars.length();
                         int arrayLength = list.get(0).length();
@@ -74,7 +79,7 @@ public class TextureGlyphProvider implements GlyphProvider {
                     list.add(chars);
                 }
                 if (!list.isEmpty() && !list.get(0).isEmpty()) {
-                    return new Factory(new ResourceLocation(JsonUtil.getString(jsonObject, "file")), height, ascent, list);
+                    return new Factory(new ResourceLocation(JsonUtils.getString(jsonObject, "file")), height, ascent, list);
                 } else {
                     throw new JsonParseException("Expected to find data in chars, found none.");
                 }
@@ -82,10 +87,9 @@ public class TextureGlyphProvider implements GlyphProvider {
         }
 
         @Override
-        public GlyphProvider create(IResourceManager resourceManager) {
-            try {
-                IResource resource = resourceManager.getResource(this.file);
-                BufferedImage bufferedImage = TextureUtils.readBufferedImage(resource.getInputStream());
+        public @Nullable GlyphProvider create(IResourceManager resourceManager) {
+            try (IResource resource = resourceManager.getResource(this.file)) {
+                BufferedImage bufferedImage = TextureUtil.readBufferedImage(resource.getInputStream());
                 int width = bufferedImage.getWidth();
                 int height = bufferedImage.getHeight();
                 int charWidth = width / this.chars.get(0).length();
@@ -144,6 +148,7 @@ public class TextureGlyphProvider implements GlyphProvider {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     static final class TextureGlyphInfo implements GlyphInfo {
 
         private final float scale;
@@ -188,12 +193,9 @@ public class TextureGlyphProvider implements GlyphProvider {
 
         @Override
         public void uploadGlyph(int xOffset, int yOffset) {
-            LOGGER.info("xOffset: {}, yOffset: {}, width: {}, height: {}, unpackSkipPixels: {}, unpackSkipRows: {}",
-                    xOffset, yOffset, this.width, this.height, this.unpackSkipPixels, this.unpackSkipRows);
-            TextureUtil.uploadTextureImageSubImpl(texture.getSubimage(this.unpackSkipPixels, this.unpackSkipRows,
+            TextureUtilAccessor.invokeUploadTextureImageSubImpl(texture.getSubimage(this.unpackSkipPixels, this.unpackSkipRows,
                     this.width, this.height),
                     xOffset, yOffset, false, false);
-            //this.texture.uploadTextureSub(0, xOffset, yOffset, this.unpackSkipPixels, this.unpackSkipRows, this.width, this.height, false);
         }
 
         //TODO Color check?
