@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.MathHelper;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -140,6 +141,11 @@ public abstract class FontRendererMixin implements GlyphFontExt, AutoCloseable {
     @Override
     public void legacyfontprovider$setGlyphFont(GlyphFont font) {
         legacyfontprovider$glyphFont = font;
+    }
+
+    @Override
+    public @Nullable GlyphFont legacyfontprovider$getGlyphFont() {
+        return legacyfontprovider$glyphFont;
     }
 
     @Override

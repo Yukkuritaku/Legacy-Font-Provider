@@ -29,6 +29,7 @@ loom {
             // If you don't want mixins, remove these lines
             property("mixin.debug", "true")
             property("asmhelper.verbose", "true")
+            //arg("--tweakClass", "gg.essential.loader.stage0.EssentialSetupTweaker")
             arg("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
         }
     }
@@ -64,6 +65,7 @@ repositories {
     maven("https://repo.spongepowered.org/maven/")
     // If you don't want to log in with your real minecraft account, remove this line
     maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
+
 }
 
 val shadowImpl: Configuration by configurations.creating {
@@ -74,6 +76,10 @@ dependencies {
     minecraft("com.mojang:minecraft:1.8.9")
     mappings("de.oceanlabs.mcp:mcp_stable:22-1.8.9")
     forge("net.minecraftforge:forge:1.8.9-11.15.1.2318-1.8.9")
+    modCompileOnly(fileTree(mapOf(
+        "dir" to "./mods",
+        "include" to "*.jar"
+        )))
 
     shadowImpl("it.unimi.dsi:fastutil:8.5.12")
     // If you don't want mixins, remove these lines
@@ -134,6 +140,7 @@ tasks.shadowJar {
     destinationDirectory.set(layout.buildDirectory.dir("badjars"))
     archiveClassifier.set("all-dev")
     configurations = listOf(shadowImpl)
+    minimize()
     doLast {
         configurations.forEach {
             println("Copying jars into mod: ${it.files}")
