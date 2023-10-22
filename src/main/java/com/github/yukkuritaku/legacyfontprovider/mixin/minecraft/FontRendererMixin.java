@@ -9,7 +9,6 @@ import com.github.yukkuritaku.legacyfontprovider.font.glyphs.Glyph;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -33,15 +32,6 @@ public abstract class FontRendererMixin implements GlyphFontExt, AutoCloseable {
     protected float posX;
     @Shadow
     protected float posY;
-
-    @Shadow
-    private float red;
-    @Shadow
-    private float blue;
-    @Shadow
-    private float green;
-    @Shadow
-    private float alpha;
     @Shadow
     private boolean unicodeFlag;
 
@@ -51,10 +41,10 @@ public abstract class FontRendererMixin implements GlyphFontExt, AutoCloseable {
     @Shadow
     protected abstract float renderUnicodeChar(char ch, boolean italic);
 
-    @Shadow
+    /*@Shadow
     protected int[] charWidth;
     @Shadow
-    protected byte[] glyphWidth;
+    protected byte[] glyphWidth;*/
 
 
     @Inject(method = "renderCharAtPos", at = @At("HEAD"), cancellable = true)
@@ -68,7 +58,7 @@ public abstract class FontRendererMixin implements GlyphFontExt, AutoCloseable {
 
                     this.renderEngine.bindTexture(glyph.getTextureLocation());
                     GL11.glBegin(7);
-                    glyph.render(this.renderEngine, italic, this.posX, this.posY, null, this.red, this.blue, this.green, this.alpha);
+                    glyph.render(this.renderEngine, italic, this.posX, this.posY, null, 0, 0, 0, 0);
                     GL11.glEnd();
                     //GlStateManager.disableBlend();
                     cir.setReturnValue(fontGlyph.getAdvance());
@@ -101,7 +91,7 @@ public abstract class FontRendererMixin implements GlyphFontExt, AutoCloseable {
             if (!fontGlyph.equals(DefaultGlyph.INSTANCE)) {
                 cir.setReturnValue(character == 167 ? 0 : MathHelper.ceiling_float_int(legacyfontprovider$glyphFont.findGlyph(character).getAdvance(false)));
             }
-        }else {
+        }/*else {
             if (character == 160) {
                 cir.setReturnValue(4);
             } else if (character == 167) {
@@ -122,7 +112,7 @@ public abstract class FontRendererMixin implements GlyphFontExt, AutoCloseable {
                     cir.setReturnValue(0);
                 }
             }
-        }
+        }*/
     }
 
     @Inject(method = "setUnicodeFlag", at = @At("HEAD"))

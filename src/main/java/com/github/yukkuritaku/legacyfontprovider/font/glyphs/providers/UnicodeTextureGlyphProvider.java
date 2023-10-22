@@ -159,9 +159,7 @@ public class UnicodeTextureGlyphProvider implements GlyphProvider {
 
         @Override
         public void uploadGlyph(int xOffset, int yOffset) {
-            LOGGER.info("xOffset: {}, yOffset: {}, width: {}, height: {}, unpackSkipPixels: {}, unpackSkipRows: {}",
-                    xOffset, yOffset, this.width, this.height, this.unpackSkipPixels, this.unpackSkipRows);
-            //TextureUtil.uploadTextureImageSubImpl(subImage, xOffset, yOffset, false, false);
+            //TextureUtilAccessor.invokeUploadTextureImageSubImpl(subImage, xOffset, yOffset, false, false);
             //this.texture.uploadTextureSub(0, xOffset, yOffset, this.unpackSkipPixels, this.unpackSkipRows, this.width, this.height, false);
         }
 

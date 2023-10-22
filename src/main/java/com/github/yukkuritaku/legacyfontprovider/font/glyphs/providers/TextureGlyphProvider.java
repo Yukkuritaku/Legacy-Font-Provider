@@ -1,6 +1,7 @@
 package com.github.yukkuritaku.legacyfontprovider.font.glyphs.providers;
 
 import com.github.yukkuritaku.legacyfontprovider.font.glyphs.GlyphInfo;
+import com.github.yukkuritaku.legacyfontprovider.mixin.minecraft.TextureUtilAccessor;
 import com.github.yukkuritaku.legacyfontprovider.util.JsonUtil;
 import com.github.yukkuritaku.legacyfontprovider.util.TextureUtils;
 import com.google.common.collect.Lists;
@@ -188,18 +189,16 @@ public class TextureGlyphProvider implements GlyphProvider {
 
         @Override
         public void uploadGlyph(int xOffset, int yOffset) {
-            LOGGER.info("xOffset: {}, yOffset: {}, width: {}, height: {}, unpackSkipPixels: {}, unpackSkipRows: {}",
-                    xOffset, yOffset, this.width, this.height, this.unpackSkipPixels, this.unpackSkipRows);
-            TextureUtil.uploadTextureImageSubImpl(texture.getSubimage(this.unpackSkipPixels, this.unpackSkipRows,
+            /*LOGGER.info("xOffset: {}, yOffset: {}, width: {}, height: {}, unpackSkipPixels: {}, unpackSkipRows: {}",
+                    xOffset, yOffset, this.width, this.height, this.unpackSkipPixels, this.unpackSkipRows);*/
+            TextureUtilAccessor.invokeUploadTextureImageSubImpl(texture.getSubimage(this.unpackSkipPixels, this.unpackSkipRows,
                     this.width, this.height),
                     xOffset, yOffset, false, false);
-            //this.texture.uploadTextureSub(0, xOffset, yOffset, this.unpackSkipPixels, this.unpackSkipRows, this.width, this.height, false);
         }
 
         //TODO Color check?
         @Override
         public boolean isColored() {
-            //return this.texture.getFormat().getPixelSize() > 1;
             return true;
         }
 

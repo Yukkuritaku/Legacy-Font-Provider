@@ -3,6 +3,7 @@ package com.github.yukkuritaku.legacyfontprovider.plugin;
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import static com.github.yukkuritaku.legacyfontprovider.plugin.TargetedMod.VANILLA;
@@ -17,13 +18,13 @@ public enum Mixin {
     //
 
     // Replace with your own mixins:
-    ItemEditableBookMixin("minecraft.ItemEditableBookMixin", Side.BOTH, VANILLA),
     FallbackResourceManagerMixin("minecraft.FallbackResourceManagerMixin", Side.CLIENT, VANILLA),
     FileResourcePackMixin("minecraft.FileResourcePackMixin", Side.CLIENT, VANILLA),
     FolderResourcePackMixin("minecraft.FolderResourcePackMixin", Side.CLIENT, VANILLA),
     FontRendererMixin("minecraft.FontRendererMixin", Side.CLIENT, VANILLA),
     MinecraftMixin("minecraft.MinecraftMixin", Side.CLIENT, VANILLA),
     SimpleReloadableResourceManagerMixin("minecraft.SimpleReloadableResourceManagerMixin", Side.CLIENT, VANILLA),
+    TextureUtilAccessor("minecraft.TextureUtilAccessor", Side.CLIENT, VANILLA)
 
 
     ;
@@ -48,7 +49,7 @@ public enum Mixin {
         return (side == Side.BOTH
                 || side == Side.SERVER && FMLLaunchHandler.side().isServer()
                 || side == Side.CLIENT && FMLLaunchHandler.side().isClient())
-                && loadedMods.containsAll(targetedMods);
+                && new HashSet<>(loadedMods).containsAll(targetedMods);
     }
 }
 
