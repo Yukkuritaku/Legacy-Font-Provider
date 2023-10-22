@@ -1,3 +1,5 @@
+(English version of README are [here](https://github.com/Yukkuritaku/Legacy-Font-Provider/blob/master/README_EN.md))
+
 # Legacy Font Provider
 
 ([Unicode Fix](https://modrinth.com/mod/unicode-fix)も同時に使うことをお勧めします)
