@@ -58,8 +58,7 @@ public class FontManager implements IResourceManagerReloadListener {
         Map<ResourceLocation, List<GlyphProvider>> map = Maps.newHashMap();
         bar.step("Loading Default font");
         // Step 1: load default.json and alt.json in mod resource pack
-        try (
-            InputStream defaultJson = FontManager.class.getResourceAsStream("/assets/minecraft/font/default.json");
+        try (InputStream defaultJson = FontManager.class.getResourceAsStream("/assets/minecraft/font/default.json");
             InputStream altJson = FontManager.class.getResourceAsStream("/assets/minecraft/font/alt.json");) {
             // default
             this.loadFont(resourceManager, gson, map, new ResourceLocation("default"), defaultJson);
