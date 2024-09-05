@@ -1,6 +1,7 @@
 package com.github.yukkuritaku.legacyfontprovider.resources;
 
 public enum ResourcePackType {
+
     CLIENT_RESOURCES("assets"),
     SERVER_DATA("data");
 

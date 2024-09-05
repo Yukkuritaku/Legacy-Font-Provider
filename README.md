@@ -2,11 +2,14 @@
 
 # Legacy Font Provider
 
-([Unicode Fix](https://modrinth.com/mod/unicode-fix)も同時に使うことをお勧めします)
+Minecraft 1.13にあるFont Providerを1.7.10で使えるようにするModです。
 
-### 概要
-Minecraft 1.13+にあるFont Providerを1.12.2以下で使えるようにするModです。
-(現在はBitmapのみ対応)
+(TTFはまだ未実装です、やる気が出たら実装します)
+
+### 前提mod
+
+- [Unicode Fix](https://modrinth.com/mod/unicode-fix)
+- [UniMixins](https://modrinth.com/mod/unimixins)
 
 ### 導入方法
 
@@ -14,15 +17,6 @@ Minecraft 1.13+にあるFont Providerを1.12.2以下で使えるようにするM
 2. [ここ](https://github.com/Yukkuritaku/Legacy-Font-Provider/releases/latest)から自分の使いたいバージョンをダウンロードする
 3. modsフォルダにこのModのJarを入れる
 4. 完了！
-
-1.7.10版では[SpongeMixins](https://modrinth.com/mod/spongemixin1710)が必要です。
-
-### 現在確認してる問題
-Optifine環境だと上手くトリミング(改行)出来ない(全てのバージョン)
-
-PatcherのOptimizedFontRendererと互換性がない(1.12.2, 1.8.9)
-
-他にも互換性がない、不具合などがあったら教えてください！
 
 ## Special Thanks
 アイディアをくれたrete2さん

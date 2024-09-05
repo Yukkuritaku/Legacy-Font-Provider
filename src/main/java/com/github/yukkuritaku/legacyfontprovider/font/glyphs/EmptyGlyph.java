@@ -1,7 +1,8 @@
 package com.github.yukkuritaku.legacyfontprovider.font.glyphs;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 
 public class EmptyGlyph extends BakedGlyph {
@@ -13,10 +14,10 @@ public class EmptyGlyph extends BakedGlyph {
     }
 
     @Override
-    public void render(TextureManager textureManager, boolean italic, float x, float y, Tessellator tessellator, float red, float green, float blue, float alpha) {
+    public void render(boolean italic, float x, float y, Tessellator tessellator, float red, float green, float blue,
+        float alpha, int packedLight) {}
 
-    }
-
+    @Nullable
     @Override
     public ResourceLocation getTextureLocation() {
         return null;

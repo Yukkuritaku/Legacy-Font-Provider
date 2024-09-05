@@ -1,16 +1,21 @@
-[
-    {
-      "modid": "${modId}",
-      "name": "${modName}",
-      "description": "Brings 1.13+ Font Provider to old version of minecraft!",
-      "version": "${modVersion}",
-      "mcversion": "${minecraftVersion}",
-      "url": "https://github.com/Yukkuritaku/Legacy-Font-Provider/tree/master",
-      "updateUrl": "",
-      "authorList": ["Yukkuritaku"],
-      "credits": "Thanks to rete2 for font provider ideas!",
-      "logoFile": "",
-      "screenshots": [],
-      "dependencies": []
-    }
-]
+{
+	"modListVersion": 2,
+	"modList": [{
+		"modid": "${modId}",
+		"name": "${modName}",
+		"description": "Backport 1.13 Minecraft font system to 1.7.10.",
+		"version": "${modVersion}",
+		"mcversion": "${minecraftVersion}",
+		"url": "https://github.com/Yukkuritaku/Legacy-Font-Provider",
+		"updateUrl": "",
+		"authorList": ["Yukkuritaku"],
+		"credits": "Thanks to the rete2 for the idea.",
+		"logoFile": "",
+		"screenshots": [],
+		"parent": "",
+		"requiredMods": [],
+		"dependencies": [],
+		"dependants": [],
+		"useDependencyInformation": true
+	}]
+}

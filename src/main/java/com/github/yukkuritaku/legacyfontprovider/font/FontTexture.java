@@ -1,36 +1,32 @@
 package com.github.yukkuritaku.legacyfontprovider.font;
 
-import com.github.yukkuritaku.legacyfontprovider.font.glyphs.BakedGlyph;
-import com.github.yukkuritaku.legacyfontprovider.font.glyphs.GlyphInfo;
-import com.github.yukkuritaku.legacyfontprovider.util.TextureUtils;
+import javax.annotation.Nullable;
+
 import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-import org.apache.logging.log4j.LogManager;
+
 import org.lwjgl.opengl.GL11;
+
+import com.github.yukkuritaku.legacyfontprovider.font.glyphs.BakedGlyph;
 
 public class FontTexture extends AbstractTexture implements AutoCloseable {
 
     private final ResourceLocation textureLocation;
     private final boolean colored;
-    private final Entry entry;
+    private final Node node;
 
     public FontTexture(ResourceLocation textureLocation, boolean colored) {
         this.textureLocation = textureLocation;
         this.colored = colored;
-        this.entry = new Entry(0, 0, 256, 256);
-        TextureUtils.allocateTexture(colored ? TextureUtils.PixelFormatGLCode.RGBA : TextureUtils.PixelFormatGLCode.INTENSITY,
-                this.getGlTextureId(),
-                256, 256);
-        //TextureUtils.allocateTexture(this.colored ? TextureUtils.PixelFormat.RGBA : TextureUtils.PixelFormat.INTENSITY, this.getGlTextureId(), 256, 256);
+        this.node = new Node(0, 0, 256, 256);
+        TextureUtil.allocateTexture(this.getGlTextureId(), 256, 256);
+
     }
 
-    public ResourceLocation getTextureLocation() {
-        return textureLocation;
-    }
-
-    @Override
-    public void loadTexture(IResourceManager resourceManager) {
+    private void bindTexture() {
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.getGlTextureId());
     }
 
     @Override
@@ -38,75 +34,89 @@ public class FontTexture extends AbstractTexture implements AutoCloseable {
         this.deleteGlTexture();
     }
 
-    public BakedGlyph createBakedGlyph(GlyphInfo glyphInfo) {
+    @Override
+    public void loadTexture(IResourceManager resourceManager) {}
+
+    @Nullable
+    public BakedGlyph createBakedGlyph(SheetGlyphInfo glyphInfo) {
         if (glyphInfo.isColored() != this.colored) {
             return null;
         } else {
-            Entry entry = this.entry.add(glyphInfo);
-            if (entry != null) {
-
-                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.getGlTextureId());
-                glyphInfo.uploadGlyph(entry.xOffset, entry.yOffset);
-                return new BakedGlyph(this.textureLocation,
-                        (entry.xOffset + 0.01f) / 256.0f,
-                        (entry.xOffset - 0.01f + glyphInfo.getWidth()) / 256.0f,
-                        (entry.yOffset + 0.01f) / 256.0f,
-                        (entry.yOffset - 0.01f + glyphInfo.getHeight()) / 256.0f,
-                        glyphInfo.getXStart(),
-                        glyphInfo.getXEnd(),
-                        glyphInfo.getYStart(),
-                        glyphInfo.getYEnd());
+            Node node = this.node.insert(glyphInfo);
+            if (node != null) {
+                this.bindTexture();
+                glyphInfo.uploadGlyph(node.x, node.y);
+                return new BakedGlyph(
+                    this.textureLocation,
+                    ((float) node.x + 0.01F) / 256.0F,
+                    ((float) node.x - 0.01F + (float) glyphInfo.getWidth()) / 256.0F,
+                    ((float) node.y + 0.01F) / 256.0F,
+                    ((float) node.y - 0.01F + (float) glyphInfo.getHeight()) / 256.0F,
+                    glyphInfo.getLeft(),
+                    glyphInfo.getRight(),
+                    glyphInfo.getTop(),
+                    glyphInfo.getBottom());
             } else {
                 return null;
             }
         }
-
     }
 
-    static class Entry {
-        final int xOffset;
-        final int yOffset;
-        final int width;
-        final int height;
-        Entry left;
-        Entry right;
+    public ResourceLocation getTextureLocation() {
+        return this.textureLocation;
+    }
+
+    static class Node {
+
+        final int x;
+        final int y;
+        private final int width;
+        private final int height;
+        @Nullable
+        private FontTexture.Node left;
+        @Nullable
+        private FontTexture.Node right;
         private boolean occupied;
 
-        private Entry(int xOffset, int yOffset, int width, int height) {
-            this.xOffset = xOffset;
-            this.yOffset = yOffset;
+        Node(int x, int y, int width, int height) {
+            this.x = x;
+            this.y = y;
             this.width = width;
             this.height = height;
         }
 
-        Entry add(GlyphInfo glyphInfo) {
+        @Nullable
+        FontTexture.Node insert(SheetGlyphInfo glyphInfo) {
             if (this.left != null && this.right != null) {
-                Entry entry = this.left.add(glyphInfo);
-                if (entry == null) {
-                    entry = this.right.add(glyphInfo);
+                FontTexture.Node node = this.left.insert(glyphInfo);
+                if (node == null) {
+                    node = this.right.insert(glyphInfo);
                 }
-                return entry;
+
+                return node;
             } else if (this.occupied) {
                 return null;
-            }
-            int width = glyphInfo.getWidth();
-            int height = glyphInfo.getHeight();
-            if (width > this.width || height > this.height) {
-                return null;
-            } else if (width == this.width || height == this.height) {
-                this.occupied = true;
-                return this;
             } else {
-                int renderWidth = this.width - width;
-                int renderHeight = this.height - height;
-                if (renderWidth > renderHeight) {
-                    this.left = new Entry(this.xOffset, this.yOffset, width, this.height);
-                    this.right = new Entry(this.xOffset + width + 1, this.yOffset, this.width - width - 1, this.height);
+                int i = glyphInfo.getWidth();
+                int j = glyphInfo.getHeight();
+                if (i > this.width || j > this.height) {
+                    return null;
+                } else if (i == this.width && j == this.height) {
+                    this.occupied = true;
+                    return this;
                 } else {
-                    this.left = new Entry(this.xOffset, this.yOffset, this.width, height);
-                    this.right = new Entry(this.xOffset, this.yOffset + height + 1, this.width, this.height - height - 1);
+                    int k = this.width - i;
+                    int l = this.height - j;
+                    if (k > l) {
+                        this.left = new FontTexture.Node(this.x, this.y, i, this.height);
+                        this.right = new FontTexture.Node(this.x + i + 1, this.y, this.width - i - 1, this.height);
+                    } else {
+                        this.left = new FontTexture.Node(this.x, this.y, this.width, j);
+                        this.right = new FontTexture.Node(this.x, this.y + j + 1, this.width, this.height - j - 1);
+                    }
+
+                    return this.left.insert(glyphInfo);
                 }
-                return this.left.add(glyphInfo);
             }
         }
     }

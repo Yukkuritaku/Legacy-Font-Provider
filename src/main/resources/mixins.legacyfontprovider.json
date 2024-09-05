@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8.3-GTNH",
+  "package": "com.github.yukkuritaku.legacyfontprovider.mixin.normal",
+  "refmap": "mixins.legacyfontprovider.refmap.json",
+  "target": "@env(DEFAULT)",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "FallbackResourceManagerMixin",
+    "FileResourcePackMixin",
+    "FolderResourcePackMixin",
+    "FontRendererMixin",
+    "GameSettingsMixin",
+    "MinecraftMixin",
+    "SimpleReloadableResourceManagerMixin",
+    "SimpleResourceMixin",
+    "TextureUtilAccessor"
+  ]
+}
