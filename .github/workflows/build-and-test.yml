@@ -1,7 +1,8 @@
 
-name: Build and test
+name: Build and test client
 
 on:
+
   pull_request:
     branches: [ master, main ]
   push:
@@ -10,4 +11,21 @@ on:
 jobs:
   build-and-test:
     uses: GTNewHorizons/GTNH-Actions-Workflows/.github/workflows/build-and-test.yml@master
+    with:
+      client-only: true
     secrets: inherit
+
+#jobs:
+#  run:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Copy mod jar to mods
+#        run: mkdir -p run/mods && find build/libs ! -iregex "legacyfontprovider-.*\.dirty\.jar" -exec cp {} run/mods \;
+#      - name: Run the mc client
+#        uses: 3arthqu4ke/mc-runtime-test@2.4.0
+#        with:
+#          mc: 1.7.10
+#          modloader: forge
+#          regex: Forge
+#          mc-runtime-test: lexforge
+#          java: 8

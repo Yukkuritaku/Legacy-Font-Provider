@@ -3,14 +3,12 @@ package com.github.yukkuritaku.legacyfontprovider.util;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.lang.reflect.Type;
 
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 
 public class JsonUtil {
@@ -225,75 +223,5 @@ public class JsonUtil {
 
             return lvt_1_1_;
         }
-    }
-
-    @Nullable
-    public static <T> T fromJson(Gson p_188173_0_, Reader p_188173_1_, Class<T> p_188173_2_, boolean p_188173_3_) {
-        try {
-            JsonReader lvt_4_1_ = new JsonReader(p_188173_1_);
-            lvt_4_1_.setLenient(p_188173_3_);
-            return p_188173_0_.getAdapter(p_188173_2_)
-                .read(lvt_4_1_);
-        } catch (IOException var5) {
-            throw new JsonParseException(var5);
-        }
-    }
-
-    @Nullable
-    public static <T> T fromJson(Gson p_193838_0_, Reader p_193838_1_, Type p_193838_2_, boolean p_193838_3_) {
-        try {
-            JsonReader lvt_4_1_ = new JsonReader(p_193838_1_);
-            lvt_4_1_.setLenient(p_193838_3_);
-            return (T) p_193838_0_.getAdapter(TypeToken.get(p_193838_2_))
-                .read(lvt_4_1_);
-        } catch (IOException var5) {
-            throw new JsonParseException(var5);
-        }
-    }
-
-    @Nullable
-    public static <T> T fromJson(Gson p_193837_0_, String p_193837_1_, Type p_193837_2_, boolean p_193837_3_) {
-        return fromJson(p_193837_0_, new StringReader(p_193837_1_), p_193837_2_, p_193837_3_);
-    }
-
-    @Nullable
-    public static <T> T fromJson(Gson p_188176_0_, String p_188176_1_, Class<T> p_188176_2_, boolean p_188176_3_) {
-        return fromJson(p_188176_0_, new StringReader(p_188176_1_), p_188176_2_, p_188176_3_);
-    }
-
-    @Nullable
-    public static <T> T fromJson(Gson p_193841_0_, Reader p_193841_1_, Type p_193841_2_) {
-        return fromJson(p_193841_0_, p_193841_1_, p_193841_2_, false);
-    }
-
-    @Nullable
-    public static <T> T fromJson(Gson p_193840_0_, String p_193840_1_, Type p_193840_2_) {
-        return fromJson(p_193840_0_, p_193840_1_, p_193840_2_, false);
-    }
-
-    @Nullable
-    public static <T> T fromJson(Gson p_193839_0_, Reader p_193839_1_, Class<T> p_193839_2_) {
-        return fromJson(p_193839_0_, p_193839_1_, p_193839_2_, false);
-    }
-
-    @Nullable
-    public static <T> T fromJson(Gson p_188178_0_, String p_188178_1_, Class<T> p_188178_2_) {
-        return fromJson(p_188178_0_, p_188178_1_, p_188178_2_, false);
-    }
-
-    public static JsonObject fromJson(String p_212746_0_, boolean p_212746_1_) {
-        return fromJson((Reader) (new StringReader(p_212746_0_)), p_212746_1_);
-    }
-
-    public static JsonObject fromJson(Reader p_212744_0_, boolean p_212744_1_) {
-        return (JsonObject) fromJson(GSON, p_212744_0_, JsonObject.class, p_212744_1_);
-    }
-
-    public static JsonObject fromJson(String p_212745_0_) {
-        return fromJson(p_212745_0_, false);
-    }
-
-    public static JsonObject fromJson(Reader p_212743_0_) {
-        return fromJson(p_212743_0_, false);
     }
 }
