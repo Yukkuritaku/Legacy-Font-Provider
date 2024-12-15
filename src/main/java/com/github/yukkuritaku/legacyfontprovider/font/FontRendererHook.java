@@ -5,6 +5,9 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.github.yukkuritaku.legacyfontprovider.ext.MinecraftExt;
 
 /**
@@ -12,6 +15,9 @@ import com.github.yukkuritaku.legacyfontprovider.ext.MinecraftExt;
  * these methods are automatically called from transformers
  */
 public class FontRendererHook {
+
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static boolean errored = false;
 
     public static FontManager getFontManager() {
         return ((MinecraftExt) Minecraft.getMinecraft()).getFontManager();
@@ -80,7 +86,13 @@ public class FontRendererHook {
                 return true;
             }
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            // only throw one error, because cause lag at main menu
+            if (!errored) {
+                LOGGER.warn(
+                    "SplashProgress FontRenderer class not found, maybe cause the issues but skip the error for no crashes");
+                LOGGER.warn("StackTrace: ", e);
+                errored = true;
+            }
         }
         return false;
     }
