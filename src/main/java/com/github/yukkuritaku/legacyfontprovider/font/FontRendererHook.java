@@ -21,6 +21,10 @@ public class FontRendererHook {
         return ((MinecraftExt) Minecraft.getMinecraft()).getFontProviderRenderer();
     }
 
+    public static FontProviderRenderer getFishyFontProviderRenderer() {
+        return ((MinecraftExt) Minecraft.getMinecraft()).getFishyFontProviderRenderer();
+    }
+
     public static int drawStringWithShadow(String text, float x, float y, int color) {
         return getFontProviderRenderer().drawStringWithShadow(text, x, y, color);
     }
@@ -69,6 +73,10 @@ public class FontRendererHook {
         try {
             Class<?> splashFontRenderer = Class.forName("cpw.mods.fml.client.SplashProgress$SplashFontRenderer");
             if (splashFontRenderer.isAssignableFrom(fontRenderer.getClass())) {
+                return true;
+            }
+            Class<?> modernSplashFontRenderer = Class.forName("gkappa.modernsplash.CustomSplash$SplashFontRenderer");
+            if (modernSplashFontRenderer.isAssignableFrom(fontRenderer.getClass())) {
                 return true;
             }
         } catch (ClassNotFoundException e) {

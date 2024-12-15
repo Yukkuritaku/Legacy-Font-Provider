@@ -14,6 +14,7 @@
     "MinecraftMixin",
     "SimpleReloadableResourceManagerMixin",
     "SimpleResourceMixin",
-    "TextureUtilAccessor"
+    "TextureUtilAccessor",
+    "GuiEnchantmentMixin"
   ]
 }

@@ -8,4 +8,6 @@ public interface MinecraftExt {
     FontManager getFontManager();
 
     FontProviderRenderer getFontProviderRenderer();
+
+    FontProviderRenderer getFishyFontProviderRenderer();
 }

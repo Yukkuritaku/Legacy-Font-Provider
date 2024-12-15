@@ -62,12 +62,12 @@ public class FontProviderRenderer implements AutoCloseable {
 
     @Nullable
     public static EnumChatFormatting fromFormattingCode(char character) {
-        char lvt_1_1_ = Character.toString(character)
+        char c = Character.toString(character)
             .toLowerCase(Locale.ROOT)
             .charAt(0);
         EnumChatFormatting[] values = EnumChatFormatting.values();
         for (EnumChatFormatting chatFormatting : values) {
-            if (chatFormatting.formattingCode == lvt_1_1_) {
+            if (chatFormatting.formattingCode == c) {
                 return chatFormatting;
             }
         }
@@ -82,14 +82,14 @@ public class FontProviderRenderer implements AutoCloseable {
 
         while ((index = string.indexOf(167, index + 1)) != -1) {
             if (index < length - 1) {
-                EnumChatFormatting chatFormatting = fromFormattingCode(string.charAt(index + 1));
-                if (chatFormatting != null) {
-                    if (!chatFormatting.isFancyStyling()) {
+                EnumChatFormatting formatting = fromFormattingCode(string.charAt(index + 1));
+                if (formatting != null) {
+                    if (!formatting.isFancyStyling()) {
                         builder.setLength(0);
                     }
 
-                    if (chatFormatting != EnumChatFormatting.RESET) {
-                        builder.append(chatFormatting);
+                    if (formatting != EnumChatFormatting.RESET) {
+                        builder.append(formatting);
                     }
                 }
             }
@@ -174,9 +174,9 @@ public class FontProviderRenderer implements AutoCloseable {
         for (int index = 0; index < text.length(); ++index) {
             char character = text.charAt(index);
             if (character == 167 && index + 1 < text.length()) {
-                EnumChatFormatting chatFormatting = fromFormattingCode(text.charAt(index + 1));
-                if (chatFormatting != null) {
-                    if (!chatFormatting.isFancyStyling()) {
+                EnumChatFormatting formatting = fromFormattingCode(text.charAt(index + 1));
+                if (formatting != null) {
+                    if (!formatting.isFancyStyling()) {
                         obfuscated = false;
                         bold = false;
                         strikethrough = false;
@@ -187,20 +187,20 @@ public class FontProviderRenderer implements AutoCloseable {
                         b = defB;
                     }
 
-                    if (chatFormatting.isColor()) {
-                        int lvt_26_1_ = getChatFormattingColor(chatFormatting);
-                        r = (float) (lvt_26_1_ >> 16 & 255) / 255.0F * shadowColor;
-                        g = (float) (lvt_26_1_ >> 8 & 255) / 255.0F * shadowColor;
-                        b = (float) (lvt_26_1_ & 255) / 255.0F * shadowColor;
-                    } else if (chatFormatting == EnumChatFormatting.OBFUSCATED) {
+                    if (formatting.isColor()) {
+                        int chatColor = getChatFormattingColor(formatting);
+                        r = (float) (chatColor >> 16 & 255) / 255.0F * shadowColor;
+                        g = (float) (chatColor >> 8 & 255) / 255.0F * shadowColor;
+                        b = (float) (chatColor & 255) / 255.0F * shadowColor;
+                    } else if (formatting == EnumChatFormatting.OBFUSCATED) {
                         obfuscated = true;
-                    } else if (chatFormatting == EnumChatFormatting.BOLD) {
+                    } else if (formatting == EnumChatFormatting.BOLD) {
                         bold = true;
-                    } else if (chatFormatting == EnumChatFormatting.STRIKETHROUGH) {
+                    } else if (formatting == EnumChatFormatting.STRIKETHROUGH) {
                         strikethrough = true;
-                    } else if (chatFormatting == EnumChatFormatting.UNDERLINE) {
+                    } else if (formatting == EnumChatFormatting.UNDERLINE) {
                         underline = true;
-                    } else if (chatFormatting == EnumChatFormatting.ITALIC) {
+                    } else if (formatting == EnumChatFormatting.ITALIC) {
                         italic = true;
                     }
                 }
@@ -416,21 +416,21 @@ public class FontProviderRenderer implements AutoCloseable {
     }
 
     public String wrapFormattedStringToWidth(String str, int wrapWidth) {
-        String lvt_3_1_;
-        String lvt_5_1_;
-        for (lvt_3_1_ = ""; !str.isEmpty(); lvt_3_1_ = lvt_3_1_ + lvt_5_1_ + "\n") {
-            int lvt_4_1_ = this.sizeStringToWidth(str, wrapWidth);
-            if (str.length() <= lvt_4_1_) {
-                return lvt_3_1_ + str;
+        String wrappedFormatString;
+        String subStr;
+        for (wrappedFormatString = ""; !str.isEmpty(); wrappedFormatString = wrappedFormatString + subStr + "\n") {
+            int sizeWidth = this.sizeStringToWidth(str, wrapWidth);
+            if (str.length() <= sizeWidth) {
+                return wrappedFormatString + str;
             }
 
-            lvt_5_1_ = str.substring(0, lvt_4_1_);
-            char lvt_6_1_ = str.charAt(lvt_4_1_);
-            boolean lvt_7_1_ = lvt_6_1_ == ' ' || lvt_6_1_ == '\n';
-            str = getFormatString(lvt_5_1_) + str.substring(lvt_4_1_ + (lvt_7_1_ ? 1 : 0));
+            subStr = str.substring(0, sizeWidth);
+            char c = str.charAt(sizeWidth);
+            boolean emptyOrNewLine = c == ' ' || c == '\n';
+            str = getFormatString(subStr) + str.substring(sizeWidth + (emptyOrNewLine ? 1 : 0));
         }
 
-        return lvt_3_1_;
+        return wrappedFormatString;
     }
 
     private int sizeStringToWidth(String str, int wrapWidth) {

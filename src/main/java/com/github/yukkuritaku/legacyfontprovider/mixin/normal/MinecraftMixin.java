@@ -6,7 +6,6 @@ import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.LanguageManager;
 import net.minecraft.client.resources.data.IMetadataSerializer;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.util.ResourceLocation;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -44,6 +43,8 @@ public abstract class MinecraftMixin implements MinecraftExt {
     private FontManager legacyfontprovider$fontManager;
     @Unique
     private FontProviderRenderer legacyfontprovider$fontProviderRenderer;
+    @Unique
+    private FontProviderRenderer legacyfontprovider$fishyFontProviderRenderer;
 
     @Inject(
         method = "startGame",
@@ -52,15 +53,27 @@ public abstract class MinecraftMixin implements MinecraftExt {
             target = "Lnet/minecraft/client/gui/FontRenderer;<init>(Lnet/minecraft/client/settings/GameSettings;Lnet/minecraft/util/ResourceLocation;Lnet/minecraft/client/renderer/texture/TextureManager;Z)V",
             ordinal = 0))
 
-    private void onStartGame(CallbackInfo ci) {
+    private void onStartGame_normal_font(CallbackInfo ci) {
         this.legacyfontprovider$fontManager = new FontManager(this.getTextureManager(), this.func_152349_b());
         this.mcResourceManager.registerReloadListener(this.legacyfontprovider$fontManager);
         this.legacyfontprovider$fontProviderRenderer = this.legacyfontprovider$fontManager
-            .getFontProvider(new ResourceLocation("default"));
+            .getFontProvider(FontManager.DEFAULT_FONT_RENDERER_NAME);
         if (this.gameSettings.language != null) {
             this.legacyfontprovider$fontProviderRenderer
                 .setBidiFlag(this.mcLanguageManager.isCurrentLanguageBidirectional());
         }
+    }
+
+    @Inject(
+        method = "startGame",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/gui/FontRenderer;<init>(Lnet/minecraft/client/settings/GameSettings;Lnet/minecraft/util/ResourceLocation;Lnet/minecraft/client/renderer/texture/TextureManager;Z)V",
+            ordinal = 1))
+
+    private void onStartGame_enchantment_font(CallbackInfo ci) {
+        this.legacyfontprovider$fishyFontProviderRenderer = this.legacyfontprovider$fontManager
+            .getFontProvider(FontManager.GALACTIC_FONT_RENDERER_NAME);
     }
 
     @Override
@@ -71,5 +84,10 @@ public abstract class MinecraftMixin implements MinecraftExt {
     @Override
     public FontProviderRenderer getFontProviderRenderer() {
         return this.legacyfontprovider$fontProviderRenderer;
+    }
+
+    @Override
+    public FontProviderRenderer getFishyFontProviderRenderer() {
+        return this.legacyfontprovider$fishyFontProviderRenderer;
     }
 }

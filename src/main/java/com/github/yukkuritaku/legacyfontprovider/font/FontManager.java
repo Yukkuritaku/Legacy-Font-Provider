@@ -61,9 +61,9 @@ public class FontManager implements IResourceManagerReloadListener {
         try (InputStream defaultJson = FontManager.class.getResourceAsStream("/assets/minecraft/font/default.json");
             InputStream altJson = FontManager.class.getResourceAsStream("/assets/minecraft/font/alt.json");) {
             // default
-            this.loadFont(resourceManager, gson, map, new ResourceLocation("default"), defaultJson);
+            this.loadFont(resourceManager, gson, map, DEFAULT_FONT_RENDERER_NAME, defaultJson);
             // alt
-            this.loadFont(resourceManager, gson, map, new ResourceLocation("alt"), altJson);
+            this.loadFont(resourceManager, gson, map, GALACTIC_FONT_RENDERER_NAME, altJson);
 
         } catch (IOException e) {
             LOGGER.error("IOException", e);
