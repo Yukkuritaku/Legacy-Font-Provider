@@ -154,6 +154,7 @@ public class FontProviderRenderer implements AutoCloseable {
     }
 
     private float renderStringAtPos(String text, float x, float y, int color, boolean dropShadow) {
+        GL11.glPushMatrix();
         float shadowColor = dropShadow ? 0.25F : 1.0F;
         float defR = (float) (color >> 16 & 255) / 255.0F * shadowColor;
         float defG = (float) (color >> 8 & 255) / 255.0F * shadowColor;
@@ -279,6 +280,7 @@ public class FontProviderRenderer implements AutoCloseable {
             Tessellator.instance.draw();
             GL11.glEnable(GL11.GL_TEXTURE_2D);
         }
+        GL11.glPopMatrix();
         return x;
     }
 

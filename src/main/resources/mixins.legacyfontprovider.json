@@ -11,10 +11,12 @@
     "FolderResourcePackMixin",
     "FontRendererMixin",
     "GameSettingsMixin",
+    "GuiEnchantmentMixin",
+    "GuiMixin",
     "MinecraftMixin",
     "SimpleReloadableResourceManagerMixin",
     "SimpleResourceMixin",
     "TextureUtilAccessor",
-    "GuiEnchantmentMixin"
+    "compat.ezstorage.GuiStorageCoreMixin"
   ]
 }

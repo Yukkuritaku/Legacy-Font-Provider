@@ -1,4 +1,4 @@
-(English version of README are [here](https://github.com/Yukkuritaku/Legacy-Font-Provider/blob/master/README_EN.md))
+(English version of README are [here](https://github.com/Yukkuritaku/Legacy-Font-Provider/blob/master/README-EN.md))
 
 # Legacy Font Provider
 
