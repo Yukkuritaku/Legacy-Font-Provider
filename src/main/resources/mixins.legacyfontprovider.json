@@ -12,11 +12,9 @@
     "FontRendererMixin",
     "GameSettingsMixin",
     "GuiEnchantmentMixin",
-    "GuiMixin",
     "MinecraftMixin",
     "SimpleReloadableResourceManagerMixin",
     "SimpleResourceMixin",
     "TextureUtilAccessor",
-    "compat.ezstorage.GuiStorageCoreMixin"
   ]
 }
